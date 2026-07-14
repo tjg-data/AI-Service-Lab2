@@ -27,7 +27,7 @@ COPY . .
 # start.sh 파일 권한 부여
 # permission denied 에러 시 주석 처리 후 별도 실행
 # ---------------------------------------------
-RUN chmod +x start.sh
+# RUN chmod +x start.sh
 
 # ---------------------------------------------
 # start.sh - FastAPI 실행
