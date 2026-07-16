@@ -78,16 +78,19 @@ h1 {
   font-weight: 600;
 }
 
-.input-item input {
+.input-item input,
+.input-item select {
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   font-size: 15px;
   color: #0f172a;
   outline: none;
+  background: #ffffff;
 }
 
-.input-item input:focus {
+.input-item input:focus,
+.input-item select:focus {
   border-color: #2563eb;
 }
 

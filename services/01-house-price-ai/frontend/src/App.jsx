@@ -6,25 +6,43 @@ import "./App.css";
 // http://127.0.0.1:8000/predict 로 전달됩니다.
 const API_URL = "/predict";
 
-// 입력폼에서 사용할 항목 목록
+// 숫자로 입력받는 항목 목록
 // key: 서버로 보낼 데이터의 이름
 // label: 화면에 보여줄 이름
-const FIELDS = [
+const NUMBER_FIELDS = [
   { key: "MedInc", label: "MedInc (평균 소득)" },
   { key: "HouseAge", label: "HouseAge (주택 연식)" },
   { key: "AveRooms", label: "AveRooms (평균 방 개수)" },
   { key: "AveBedrms", label: "AveBedrms (평균 침실 개수)" },
   { key: "Population", label: "Population (인구 수)" },
   { key: "AveOccup", label: "AveOccup (평균 거주 인원)" },
-  { key: "Latitude", label: "Latitude (위도)" },
-  { key: "Longitude", label: "Longitude (경도)" },
 ];
 
-// 입력폼 초기값 (모두 빈 문자열로 시작)
-const INITIAL_FORM = FIELDS.reduce((acc, field) => {
-  acc[field.key] = "";
-  return acc;
-}, {});
+// 위도/경도 숫자 대신 선택하는 지역(대표 도시) 목록
+// FastAPI main.py의 Region Enum과 항목이 동일해야 합니다.
+const REGIONS = [
+  "Los Angeles",
+  "San Francisco",
+  "San Diego",
+  "Sacramento",
+  "San Jose",
+  "Fresno",
+  "Oakland",
+  "Long Beach",
+  "Bakersfield",
+  "Riverside",
+  "Santa Barbara",
+  "Stockton",
+];
+
+// 입력폼 초기값 (숫자 항목은 빈 문자열, 지역은 목록의 첫 값으로 시작)
+const INITIAL_FORM = {
+  ...NUMBER_FIELDS.reduce((acc, field) => {
+    acc[field.key] = "";
+    return acc;
+  }, {}),
+  region: REGIONS[0],
+};
 
 export default function App() {
   // 입력폼 값들을 저장하는 state
@@ -58,9 +76,9 @@ export default function App() {
     setLoading(true);
 
     try {
-      // 입력값(문자열)을 숫자로 변환해서 서버로 보낼 데이터 만들기
-      const requestBody = {};
-      FIELDS.forEach((field) => {
+      // 숫자 항목은 숫자로 변환하고, 지역은 문자열 그대로 서버에 보낸다.
+      const requestBody = { region: form.region };
+      NUMBER_FIELDS.forEach((field) => {
         requestBody[field.key] = Number(form[field.key]);
       });
 
@@ -103,7 +121,23 @@ export default function App() {
         {/* 입력폼 영역 */}
         <form className="predict-form" onSubmit={handleSubmit}>
           <div className="input-grid">
-            {FIELDS.map((field) => (
+            <label className="input-item">
+              <span>Region (지역)</span>
+              <select
+                name="region"
+                value={form.region}
+                onChange={handleChange}
+                required
+              >
+                {REGIONS.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {NUMBER_FIELDS.map((field) => (
               <label key={field.key} className="input-item">
                 <span>{field.label}</span>
                 <input
